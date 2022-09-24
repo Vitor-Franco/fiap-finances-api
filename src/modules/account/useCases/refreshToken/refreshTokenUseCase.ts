@@ -1,64 +1,64 @@
-import { prisma } from "database/prismaClient";
-import { addDays } from "date-fns";
-import { sign, verify } from "jsonwebtoken";
+import { prisma } from 'database/prismaClient'
+import { addDays } from 'date-fns'
+import { sign, verify } from 'jsonwebtoken'
 
-import auth from "@config/auth";
-import { AppError } from "@exceptions/AppError";
+import auth from '@config/auth'
+import { AppError } from '@exceptions/AppError'
 
 interface ITokenResponse {
-  token: string;
-  refresh_token: string;
+  token: string
+  refreshToken: string
 }
 
 interface IPayload {
-  sub: string;
-  email: string;
+  sub: string
+  email: string
 }
 
 export class RefreshTokenUseCase {
-  async execute(token: string): Promise<ITokenResponse> {
-    const { email, sub } = verify(token, auth.refresh_token.secret) as IPayload;
-    const user_id = sub;
+  async execute (token: string): Promise<ITokenResponse> {
+    const { email, sub } = verify(token, auth.refreshToken.secret) as IPayload
+    const userId = sub
 
     const userToken = await prisma.userToken.findFirst({
       where: {
-        userId: user_id,
-        refreshToken: token,
-      },
-    });
+        userId,
+        refreshToken: token
+      }
+    })
 
-    if (!userToken) {
-      throw new AppError("Refresh token does not exists!");
+    if (userToken == null) {
+      throw new AppError('Refresh token does not exists!')
     }
 
     await prisma.userToken.delete({
       where: {
-        id: userToken.id,
-      },
-    });
+        id: userToken.id
+      }
+    })
 
-    const expireDate = addDays(new Date(), auth.refresh_token.expiresNumber);
-    const refresh_token = sign({ email }, auth.refresh_token.secret, {
+    const expireDate = addDays(new Date(), auth.refreshToken.expiresNumber)
+    const refreshToken = sign({ email }, auth.refreshToken.secret, {
       subject: sub,
-      expiresIn: auth.refresh_token.expires,
-    });
+      expiresIn: auth.refreshToken.expires
+    })
 
     await prisma.userToken.create({
       data: {
         expiresDate: expireDate,
-        refreshToken: refresh_token,
-        userId: user_id,
-      },
-    });
+        refreshToken,
+        userId
+      }
+    })
 
     const newToken = sign({}, auth.token.secret, {
-      subject: user_id,
-      expiresIn: auth.token.expires,
-    });
+      subject: userId,
+      expiresIn: auth.token.expires
+    })
 
     return {
-      refresh_token,
-      token: newToken,
-    };
+      refreshToken,
+      token: newToken
+    }
   }
 }

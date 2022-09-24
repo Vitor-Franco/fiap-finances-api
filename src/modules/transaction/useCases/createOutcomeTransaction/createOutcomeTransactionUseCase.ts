@@ -1,21 +1,21 @@
-import { prisma } from "database/prismaClient";
+import { prisma } from 'database/prismaClient'
 
-import { AppError } from "@exceptions/AppError";
+import { AppError } from '@exceptions/AppError'
 
 interface ICreateOutcomeTransaction {
-  amount: number;
-  description: string;
-  observations: string;
-  date: Date;
-  isPaid: boolean;
-  showInDashboard: boolean;
-  categoryId: string;
-  bankAccountId: string;
-  userId: string;
+  amount: number
+  description: string
+  observations: string
+  date: Date
+  isPaid: boolean
+  showInDashboard: boolean
+  categoryId: string
+  bankAccountId: string
+  userId: string
 }
 
 export class CreateOutcomeTransactionUseCase {
-  async execute({
+  async execute ({
     amount,
     description,
     observations,
@@ -24,26 +24,26 @@ export class CreateOutcomeTransactionUseCase {
     showInDashboard,
     categoryId,
     bankAccountId,
-    userId,
+    userId
   }: ICreateOutcomeTransaction) {
     const bankAccount = await prisma.bankAccounts.findFirst({
       where: {
-        id: bankAccountId,
-      },
-    });
+        id: bankAccountId
+      }
+    })
 
-    if (!bankAccount) {
-      throw new AppError("Bank account not found", 404);
+    if (bankAccount == null) {
+      throw new AppError('Bank account not found', 404)
     }
 
     const updatedUser = prisma.bankAccounts.update({
       where: {
-        id: bankAccountId,
+        id: bankAccountId
       },
       data: {
-        amount: (bankAccount?.amount || 0) - amount,
-      },
-    });
+        amount: (bankAccount?.amount ?? 0) - amount
+      }
+    })
 
     const OutcomeTransaction = prisma.transactionOutcome.create({
       data: {
@@ -55,15 +55,15 @@ export class CreateOutcomeTransactionUseCase {
         showInDashboard,
         FkCategoryId: categoryId,
         FkBankAccountId: bankAccountId,
-        FkUserId: userId,
-      },
-    });
+        FkUserId: userId
+      }
+    })
 
     const [, outcomeTransactionCompleted] = await prisma.$transaction([
       updatedUser,
-      OutcomeTransaction,
-    ]);
+      OutcomeTransaction
+    ])
 
-    return outcomeTransactionCompleted;
+    return outcomeTransactionCompleted
   }
 }

@@ -1,18 +1,18 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express'
 
-import { AuthenticateUserUseCase } from "./authenticateUserUseCase";
+import { AuthenticateUserUseCase } from './authenticateUserUseCase'
 
 export class AuthenticateUserController {
-  async handle(request: Request, response: Response) {
-    const { email, password } = request.body;
+  async handle (request: Request, response: Response) {
+    const { email, password } = request.body
 
-    const createUserUseCase = new AuthenticateUserUseCase();
+    const createUserUseCase = new AuthenticateUserUseCase()
 
     const token = await createUserUseCase.execute({
       email,
-      password,
-    });
+      password
+    })
 
-    return response.json(token);
+    return response.json(token)
   }
 }

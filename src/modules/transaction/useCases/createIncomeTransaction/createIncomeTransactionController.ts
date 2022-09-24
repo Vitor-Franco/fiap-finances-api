@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
-import { CreateIncomeTransactionUseCase } from "./createIncomeTransactionUseCase";
+import { Request, Response } from 'express'
+
+import { CreateIncomeTransactionUseCase } from './createIncomeTransactionUseCase'
 
 export class CreateIncomeTransactionController {
-  async handle(request: Request, response: Response) {
-    const userId = request.user.id;
+  async handle (request: Request, response: Response) {
+    const userId = request.user.id
     const {
       amount,
       description,
@@ -12,10 +13,10 @@ export class CreateIncomeTransactionController {
       isReceived,
       showInDashboard,
       categoryId,
-      bankAccountId,
-    } = request.body;
+      bankAccountId
+    } = request.body
 
-    const createIncomeTransactionUseCase = new CreateIncomeTransactionUseCase();
+    const createIncomeTransactionUseCase = new CreateIncomeTransactionUseCase()
     const transaction = await createIncomeTransactionUseCase.execute({
       amount,
       description,
@@ -25,9 +26,9 @@ export class CreateIncomeTransactionController {
       showInDashboard,
       categoryId,
       bankAccountId,
-      userId,
-    });
+      userId
+    })
 
-    return response.status(201).json(transaction);
+    return response.status(201).json(transaction)
   }
 }

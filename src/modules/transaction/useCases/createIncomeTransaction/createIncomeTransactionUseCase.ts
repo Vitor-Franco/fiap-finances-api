@@ -1,21 +1,21 @@
-import { prisma } from "database/prismaClient";
+import { prisma } from 'database/prismaClient'
 
-import { AppError } from "@exceptions/AppError";
+import { AppError } from '@exceptions/AppError'
 
 interface ICreateIncomeTransaction {
-  amount: number;
-  description: string;
-  observations: string;
-  date: Date;
-  isReceived: boolean;
-  showInDashboard: boolean;
-  categoryId: string;
-  bankAccountId: string;
-  userId: string;
+  amount: number
+  description: string
+  observations: string
+  date: Date
+  isReceived: boolean
+  showInDashboard: boolean
+  categoryId: string
+  bankAccountId: string
+  userId: string
 }
 
 export class CreateIncomeTransactionUseCase {
-  async execute({
+  async execute ({
     amount,
     description,
     observations,
@@ -24,26 +24,26 @@ export class CreateIncomeTransactionUseCase {
     showInDashboard,
     categoryId,
     bankAccountId,
-    userId,
+    userId
   }: ICreateIncomeTransaction) {
     const bankAccount = await prisma.bankAccounts.findFirst({
       where: {
-        id: bankAccountId,
-      },
-    });
+        id: bankAccountId
+      }
+    })
 
-    if (!bankAccount) {
-      throw new AppError("Bank account not found", 404);
+    if (bankAccount == null) {
+      throw new AppError('Bank account not found', 404)
     }
 
     const updatedUser = prisma.bankAccounts.update({
       where: {
-        id: bankAccountId,
+        id: bankAccountId
       },
       data: {
-        amount: (bankAccount?.amount || 0) + amount,
-      },
-    });
+        amount: (bankAccount?.amount ?? 0) + amount
+      }
+    })
 
     const incomeTransaction = prisma.transactionIncome.create({
       data: {
@@ -55,15 +55,15 @@ export class CreateIncomeTransactionUseCase {
         showInDashboard,
         FkCategoryId: categoryId,
         FkBankAccountId: bankAccountId,
-        FkUserId: userId,
-      },
-    });
+        FkUserId: userId
+      }
+    })
 
     const [, incomeTransactionCompleted] = await prisma.$transaction([
       updatedUser,
-      incomeTransaction,
-    ]);
+      incomeTransaction
+    ])
 
-    return incomeTransactionCompleted;
+    return incomeTransactionCompleted
   }
 }

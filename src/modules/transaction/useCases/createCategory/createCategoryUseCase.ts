@@ -1,20 +1,14 @@
-import { prisma } from "database/prismaClient";
-
+import { prisma } from 'database/prismaClient'
 
 interface IRequest {
-  name: string;
-  color: string;
-  typeCategory: "INCOME" | "OUTCOME";
-  userId: string;
+  name: string
+  color: string
+  typeCategory: 'INCOME' | 'OUTCOME'
+  userId: string
 }
 
 export class CreateCategoryUseCase {
-  async execute({
-    name,
-    color,
-    typeCategory,
-    userId
-  }: IRequest) {
+  async execute ({ name, color, typeCategory, userId }: IRequest) {
     const category = await prisma.transactionCategory.create({
       data: {
         FkUserId: userId,
@@ -24,6 +18,6 @@ export class CreateCategoryUseCase {
       }
     })
 
-    return category;
+    return category
   }
 }
