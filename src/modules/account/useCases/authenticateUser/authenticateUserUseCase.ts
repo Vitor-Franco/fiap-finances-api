@@ -1,10 +1,10 @@
 import * as bcrypt from "bcrypt";
-import { sign } from "jsonwebtoken";
-import { addDays } from "date-fns";
 import { prisma } from "database/prismaClient";
-import { AppError } from "@exceptions/AppError";
-import auth from "@config/auth";
+import { addDays } from "date-fns";
+import { sign } from "jsonwebtoken";
 
+import auth from "@config/auth";
+import { AppError } from "@exceptions/AppError";
 
 interface IRequest {
   email: string;
@@ -40,18 +40,15 @@ export class AuthenticateUserUseCase {
 
     const { refresh_token, token } = auth;
 
-
     const newToken = sign({}, token.secret, {
-        subject: user.id,
-        expiresIn: token.expires,
-      }
-    );
+      subject: user.id,
+      expiresIn: token.expires,
+    });
 
     const newRefreshToken = sign({ email: user.email }, refresh_token.secret, {
-        subject: user.id,
-        expiresIn: refresh_token.expires,
-      }
-    );
+      subject: user.id,
+      expiresIn: refresh_token.expires,
+    });
 
     const expireDate = addDays(new Date(), refresh_token.expiresNumber);
 

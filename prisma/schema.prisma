@@ -38,9 +38,9 @@ model User {
 
 model BankAccounts {
   id                 String               @id @default(uuid())
-  name               String               @unique
+  name               String
   description        String?
-  amount             Int
+  amount             Int?
   createdAt          DateTime             @default(now())
   User               User                 @relation(fields: [FkUserId], references: [id])
   FkUserId           String

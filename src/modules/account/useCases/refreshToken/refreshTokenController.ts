@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { RefreshTokenUseCase } from "./refreshTokenUseCase";
 
+import { RefreshTokenUseCase } from "./refreshTokenUseCase";
 
 export class RefreshTokenController {
   async handle(request: Request, response: Response) {
@@ -12,6 +12,6 @@ export class RefreshTokenController {
     const refreshTokenUseCase = new RefreshTokenUseCase();
     const refreshToken = await refreshTokenUseCase.execute(token);
 
-    return refreshToken;
+    return response.json(refreshToken);
   }
 }

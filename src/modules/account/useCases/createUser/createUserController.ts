@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { CreateUserUseCase } from "./createUserUseCase";
 
 export class CreateUserController {
@@ -10,7 +11,7 @@ export class CreateUserController {
     const user = await createUserUseCase.execute({
       name,
       email,
-      password
+      password,
     });
 
     return response.json(user);

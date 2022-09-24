@@ -1,8 +1,9 @@
-import auth from "@config/auth";
-import { AppError } from "@exceptions/AppError";
 import { prisma } from "database/prismaClient";
 import { addDays } from "date-fns";
 import { sign, verify } from "jsonwebtoken";
+
+import auth from "@config/auth";
+import { AppError } from "@exceptions/AppError";
 
 interface ITokenResponse {
   token: string;
@@ -22,8 +23,8 @@ export class RefreshTokenUseCase {
     const userToken = await prisma.userToken.findFirst({
       where: {
         userId: user_id,
-        refreshToken: token
-      }
+        refreshToken: token,
+      },
     });
 
     if (!userToken) {
@@ -32,27 +33,27 @@ export class RefreshTokenUseCase {
 
     await prisma.userToken.delete({
       where: {
-        id: userToken.id
-      }
+        id: userToken.id,
+      },
     });
 
     const expireDate = addDays(new Date(), auth.refresh_token.expiresNumber);
     const refresh_token = sign({ email }, auth.refresh_token.secret, {
       subject: sub,
-      expiresIn: auth.refresh_token.expires
+      expiresIn: auth.refresh_token.expires,
     });
 
     await prisma.userToken.create({
       data: {
         expiresDate: expireDate,
         refreshToken: refresh_token,
-        userId: user_id
-      }
+        userId: user_id,
+      },
     });
 
     const newToken = sign({}, auth.token.secret, {
       subject: user_id,
-      expiresIn: auth.token.expires
+      expiresIn: auth.token.expires,
     });
 
     return {

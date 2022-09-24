@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-import auth from "../config/auth";
+
 import { AppError } from "@exceptions/AppError";
+
+import auth from "../config/auth";
 
 export async function ensureAuthenticated(
   request: Request,

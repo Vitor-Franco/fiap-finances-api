@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { AuthenticateUserUseCase } from "./authenticateUserUseCase";
 
 export class AuthenticateUserController {
