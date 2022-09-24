@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserToken {
+  id           String   @id @default(uuid())
+  refreshToken String
+  createdAt    DateTime @default(now())
+  expiresDate  DateTime
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("TB_USER_TOKENS")
+}
+
+model User {
+  id                  String                @id @default(uuid())
+  name                String
+  email               String                @unique
+  password            String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  BankAccounts        BankAccounts[]
+  TransactionCategory TransactionCategory[]
+  TransactionIncome   TransactionIncome[]
+  TransactionOutcome  TransactionOutcome[]
+  TransactionTransfer TransactionTransfer[]
+  UserToken           UserToken[]
+
+  @@map("TB_USERS")
+}
+
+model BankAccounts {
+  id                 String               @id @default(uuid())
+  name               String               @unique
+  description        String?
+  amount             Int
+  createdAt          DateTime             @default(now())
+  User               User                 @relation(fields: [FkUserId], references: [id])
+  FkUserId           String
+  TransactionIncome  TransactionIncome[]
+  TransactionOutcome TransactionOutcome[]
+
+  @@map("TB_BANK_ACCOUNT")
+}
+
+enum TransactionTypeEnum {
+  INCOME
+  OUTCOME
+}
+
+model TransactionCategory {
+  id                 String               @id @default(uuid())
+  typeCategory       TransactionTypeEnum
+  name               String               @unique
+  isActive           Boolean              @default(true)
+  color              String
+  User               User                 @relation(fields: [FkUserId], references: [id])
+  FkUserId           String
+  TransactionIncome  TransactionIncome[]
+  TransactionOutcome TransactionOutcome[]
+
+  @@map("TB_TRANSACTION_CATEGORY")
+}
+
+model TransactionIncome {
+  id              String              @id @default(uuid())
+  amount          Int
+  description     String
+  observations    String?
+  date            DateTime
+  isReceived      Boolean
+  showInDashboard Boolean
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  User            User                @relation(fields: [FkUserId], references: [id])
+  FkUserId        String
+  Category        TransactionCategory @relation(fields: [FkCategoryId], references: [id])
+  FkCategoryId    String
+  BankAccount     BankAccounts        @relation(fields: [FkBankAccountId], references: [id])
+  FkBankAccountId String
+
+  @@map("TB_TRANSACTION_INCOME")
+}
+
+model TransactionOutcome {
+  id              String              @id @default(uuid())
+  amount          Int
+  description     String
+  observations    String?
+  date            DateTime
+  isPaid          Boolean
+  showInDashboard Boolean
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  Category        TransactionCategory @relation(fields: [FkCategoryId], references: [id])
+  FkCategoryId    String
+  User            User                @relation(fields: [FkUserId], references: [id])
+  FkUserId        String
+  BankAccount     BankAccounts        @relation(fields: [FkBankAccountId], references: [id])
+  FkBankAccountId String
+
+  @@map("TB_TRANSACTION_OUTCOME")
+}
+
+model TransactionTransfer {
+  id              String   @id @default(uuid())
+  amount          Int
+  description     String
+  date            DateTime
+  showInDashboard Boolean
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  User            User     @relation(fields: [FkUserId], references: [id])
+  FkUserId        String
+
+  @@map("TB_TRANSACTION_TRANSFER")
+}
