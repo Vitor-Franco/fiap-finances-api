@@ -32,7 +32,7 @@ export class CreateIncomeTransactionUseCase {
       }
     })
 
-    if (bankAccount == null) {
+    if (!bankAccount) {
       throw new AppError('Bank account not found', 404)
     }
 

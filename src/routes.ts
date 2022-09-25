@@ -8,6 +8,7 @@ import { RefreshTokenController } from '@modules/account/useCases/refreshToken/r
 import { CreateCategoryController } from '@modules/transaction/useCases/createCategory/createCategoryController'
 import { CreateIncomeTransactionController } from '@modules/transaction/useCases/createIncomeTransaction/createIncomeTransactionController'
 import { CreateOutcomeTransactionController } from '@modules/transaction/useCases/createOutcomeTransaction/createOutcomeTransactionController'
+import { ListTransactionsController } from '@modules/transaction/useCases/listTransactions/listTransactionsController'
 
 export const routes = Router()
 
@@ -16,6 +17,7 @@ const createWalletController = new CreateWalletController()
 const authenticateUserController = new AuthenticateUserController()
 const refreshTokenController = new RefreshTokenController()
 const createCategoryController = new CreateCategoryController()
+const listTransactionsController = new ListTransactionsController()
 const createIncomeTransactionController =
   new CreateIncomeTransactionController()
 const createOutcomeTransactionController =
@@ -48,4 +50,9 @@ routes.post(
   '/transaction/outcome',
   ensureAuthenticated,
   createOutcomeTransactionController.handle
+)
+routes.get(
+  '/transactions/',
+  ensureAuthenticated,
+  listTransactionsController.handle
 )

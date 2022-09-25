@@ -7,6 +7,9 @@
     "dev": "ts-node-dev -r tsconfig-paths/register --exit-child --transpile-only --ignore-watch node_modules --no-notify --respawn src/server.ts",
     "lint": "eslint . --ext .ts --fix"
   },
+  "prisma": {
+    "seed": "ts-node-dev --transpile-only prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -27,7 +27,7 @@ export class RefreshTokenUseCase {
       }
     })
 
-    if (userToken == null) {
+    if (!userToken) {
       throw new AppError('Refresh token does not exists!')
     }
 
