@@ -36,6 +36,20 @@ export class CreateOutcomeTransactionUseCase {
       throw new AppError('Bank account not found', 404)
     }
 
+    const category = await prisma.transactionCategory.findFirst({
+      where: {
+        id: categoryId
+      }
+    })
+
+    if (!category) {
+      throw new AppError('Category not found', 404)
+    }
+
+    if (category.typeCategory.toUpperCase() !== 'OUTCOME') {
+      throw new AppError('Category type is not outcome', 400)
+    }
+
     const updatedUser = prisma.bankAccounts.update({
       where: {
         id: bankAccountId
