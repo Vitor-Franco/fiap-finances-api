@@ -37,7 +37,7 @@ DATABASE_URL="postgresql://postgres:root@localhost:5432/fiap_finances-db?schema=
 ### Aplicação
 
 ```bash
-# Instale as dependências, (necessário npm na versão >= 14)
+# Instale as dependências, (necessário node na versão >= 14)
 $ npm i
 
 # Rode as migrations do projeto
